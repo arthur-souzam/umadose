@@ -57,3 +57,45 @@ class BotaoPrimario extends StatelessWidget {
     );
   }
 }
+class BotaoSecundario extends StatelessWidget {
+  final String texto;
+  final IconData? icone;
+  final VoidCallback? onPressed;
+
+  const BotaoSecundario({
+    super.key,
+    required this.texto,
+    this.icone,
+    this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      height: 56,
+      child: OutlinedButton(
+        onPressed: onPressed,
+        style: OutlinedButton.styleFrom(
+          foregroundColor: Cores.creme,
+          side: const BorderSide(color: Cores.borda),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (icone != null) ...[
+              Icon(icone, size: 20),
+              const SizedBox(width: 10),
+            ],
+            Text(texto,
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+          ],
+        ),
+      ),
+    );
+  }
+}
