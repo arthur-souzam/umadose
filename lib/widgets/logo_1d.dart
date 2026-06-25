@@ -77,12 +77,12 @@ class _Logo1DPainter extends CustomPainter {
       ..cubicTo(0, -59, -4, -54, -20, -54)
       ..close();
     canvas.drawPath(onda, fundo);
-    // respingos
+
     canvas.drawCircle(const Offset(19, -82), 3.4, fundo);
     canvas.drawCircle(const Offset(25, -89), 2.3, fundo);
     canvas.restore();
 
-    // ---- "D" (âmbar), inclinado -6.5° sobre a base (162,170) ----
+   
     canvas.save();
     canvas.translate(162, 170);
     canvas.rotate(-6.5 * 3.1415926 / 180);
