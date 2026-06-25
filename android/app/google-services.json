@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "272574714476-q1igve3hbfc2db13s8507i6qs62hnsm5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.umadose",
+            "certificate_hash": "abb13a0e1cbe67889dbc592beacf9765f036cac2"
+          }
+        },
+        {
           "client_id": "272574714476-g98o3q4og86b8o1rndgmpuh794f19ser.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,6 +37,13 @@
             {
               "client_id": "272574714476-g98o3q4og86b8o1rndgmpuh794f19ser.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "272574714476-77rdpm6uetehlj5okp6281q24av2pv0n.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.umadose"
+              }
             }
           ]
         }
