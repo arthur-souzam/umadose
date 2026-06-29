@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import '../models/usuario.dart';
+import '../util/db.dart';
 
 class AuthProvider extends ChangeNotifier {
   final fb.FirebaseAuth _auth = fb.FirebaseAuth.instance;
@@ -17,10 +18,9 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> restaurarSessao() async {
     try {
-      final u = _auth.currentUser;
-      if (u != null) {
-        _usuario = Usuario.fromFirebase(u);
-        notifyListeners();
+      final user = _auth.currentUser;
+      if (user != null) {
+        await _sincronizarLocal(user, null);
       }
     } catch (_) {
       // Firebase ainda não configurado: segue para o login.
@@ -36,13 +36,7 @@ class AuthProvider extends ChangeNotifier {
         password: senha,
       );
       await cred.user?.updateDisplayName(nome);
-      _usuario = Usuario(
-        uid: cred.user!.uid,
-        nome: nome,
-        email: email,
-        faculdade: faculdade,
-      );
-      notifyListeners();
+      await _sincronizarLocal(cred.user!, faculdade, nomeManual: nome);
     } on fb.FirebaseAuthException catch (e) {
       throw Exception(_traduzErro(e));
     } finally {
@@ -57,8 +51,7 @@ class AuthProvider extends ChangeNotifier {
         email: email,
         password: senha,
       );
-      _usuario = Usuario.fromFirebase(cred.user!);
-      notifyListeners();
+      await _sincronizarLocal(cred.user!, null);
     } on fb.FirebaseAuthException catch (e) {
       throw Exception(_traduzErro(e));
     } finally {
@@ -80,8 +73,7 @@ class AuthProvider extends ChangeNotifier {
         idToken: gAuth.idToken,
       );
       final cred = await _auth.signInWithCredential(credential);
-      _usuario = Usuario.fromFirebase(cred.user!);
-      notifyListeners();
+      await _sincronizarLocal(cred.user!, null);
     } on fb.FirebaseAuthException catch (e) {
       throw Exception(_traduzErro(e));
     } finally {
@@ -95,6 +87,40 @@ class AuthProvider extends ChangeNotifier {
     } catch (_) {}
     await _auth.signOut();
     _usuario = null;
+    notifyListeners();
+  }
+
+  Future<void> _sincronizarLocal(fb.User user, String? faculdade,
+      {String? nomeManual}) async {
+    final email = user.email ?? '${user.uid}@1dose.app';
+    final nome = nomeManual ?? user.displayName ?? email.split('@').first;
+
+    final existentes = await DBUtil.where('usuarios', 'email = ?', [email]);
+    if (existentes.isNotEmpty) {
+      final u = Usuario.fromMap(existentes.first);
+      if (faculdade != null && faculdade.isNotEmpty && faculdade != u.faculdade) {
+        final atualizado = Usuario(
+          id: u.id,
+          nome: u.nome,
+          email: email,
+          senha: '',
+          faculdade: faculdade,
+        );
+        await DBUtil.insert('usuarios', atualizado.toMap());
+        _usuario = atualizado;
+      } else {
+        _usuario = u;
+      }
+    } else {
+      final novo = Usuario(
+        nome: nome,
+        email: email,
+        senha: '',
+        faculdade: faculdade ?? '',
+      );
+      novo.id = await DBUtil.insert('usuarios', novo.toMap());
+      _usuario = novo;
+    }
     notifyListeners();
   }
 
