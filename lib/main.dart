@@ -4,8 +4,12 @@ import 'package:provider/provider.dart';
 
 import 'firebase_options.dart';
 import 'providers/auth_provider.dart';
-import 'telas/tela_home.dart';
+import 'providers/bares_provider.dart';
+import 'providers/eventos_provider.dart';
+import 'providers/prefs_provider.dart';
+import 'telas/tela_detalhe_bar.dart';
 import 'telas/tela_login.dart';
+import 'telas/tela_principal.dart';
 import 'telas/tela_splash.dart';
 import 'util/cores.dart';
 import 'util/rotas.dart';
@@ -30,6 +34,9 @@ class App1Dose extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => PrefsProvider()),
+        ChangeNotifierProvider(create: (_) => BaresProvider()),
+        ChangeNotifierProvider(create: (_) => EventosProvider()),
       ],
       child: MaterialApp(
         title: '1 Dose',
@@ -52,7 +59,8 @@ class App1Dose extends StatelessWidget {
         routes: {
           Rotas.splash: (_) => const TelaSplash(),
           Rotas.login: (_) => const TelaLogin(),
-          Rotas.home: (_) => const TelaHome(),
+          Rotas.principal: (_) => const TelaPrincipal(),
+          Rotas.detalheBar: (_) => const TelaDetalheBar(),
         },
       ),
     );

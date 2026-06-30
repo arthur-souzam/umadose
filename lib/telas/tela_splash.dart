@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/auth_provider.dart';
+import '../providers/prefs_provider.dart';
 import '../util/cores.dart';
+import '../util/db.dart';
 import '../util/rotas.dart';
+import '../util/seed.dart';
 import '../widgets/logo_1d.dart';
 
 class TelaSplash extends StatefulWidget {
@@ -26,28 +29,32 @@ class _TelaSplashState extends State<TelaSplash>
       vsync: this,
       duration: const Duration(milliseconds: 900),
     );
-    _escala = Tween<double>(
-      begin: 0.6,
-      end: 1.0,
-    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.elasticOut));
-    _opacidade = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(parent: _ctrl, curve: const Interval(0.0, 0.5)));
+    _escala = Tween<double>(begin: 0.6, end: 1.0).animate(
+      CurvedAnimation(parent: _ctrl, curve: Curves.elasticOut),
+    );
+    _opacidade = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _ctrl, curve: const Interval(0.0, 0.5)),
+    );
     _ctrl.forward();
     _inicializar();
   }
 
   Future<void> _inicializar() async {
+    await DBUtil.getDB();
+    await Seed.popularSeNecessario();
+
+    if (!mounted) return;
     final auth = context.read<AuthProvider>();
+    final prefs = context.read<PrefsProvider>();
+    await prefs.carregar();
     await auth.restaurarSessao();
 
-    await Future.delayed(const Duration(milliseconds: 1600));
+    await Future.delayed(const Duration(milliseconds: 1400));
     if (!mounted) return;
 
-    Navigator.of(
-      context,
-    ).pushReplacementNamed(auth.estaAutenticado ? Rotas.home : Rotas.login);
+    Navigator.of(context).pushReplacementNamed(
+      auth.estaAutenticado ? Rotas.principal : Rotas.login,
+    );
   }
 
   @override

@@ -37,7 +37,7 @@ class _TelaLoginState extends State<TelaLogin> {
             _dados['senha']!, _dados['faculdade']!);
       }
       if (mounted && auth.estaAutenticado) {
-        Navigator.of(context).pushReplacementNamed(Rotas.home);
+        Navigator.of(context).pushReplacementNamed(Rotas.principal);
       }
     } catch (e) {
       _mostrarErro(e.toString().replaceFirst('Exception: ', ''));
@@ -48,7 +48,7 @@ class _TelaLoginState extends State<TelaLogin> {
     final auth = context.read<AuthProvider>();
     await auth.entrarComGoogle();
     if (mounted && auth.estaAutenticado) {
-      Navigator.of(context).pushReplacementNamed(Rotas.home);
+      Navigator.of(context).pushReplacementNamed(Rotas.principal);
     }
   }
 
