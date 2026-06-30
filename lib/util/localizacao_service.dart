@@ -20,11 +20,16 @@ class LocalizacaoService {
         return const Posicao(campusLat, campusLng, real: false);
       }
 
+      final ultima = await Geolocator.getLastKnownPosition();
+      if (ultima != null) {
+        return Posicao(ultima.latitude, ultima.longitude, real: true);
+      }
+
       final p = await Geolocator.getCurrentPosition(
         locationSettings: const LocationSettings(
           accuracy: LocationAccuracy.medium,
         ),
-      );
+      ).timeout(const Duration(seconds: 6));
       return Posicao(p.latitude, p.longitude, real: true);
     } catch (_) {
       return const Posicao(campusLat, campusLng, real: false);
